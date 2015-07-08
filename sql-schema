@@ -15,8 +15,9 @@ CREATE TABLE `data` (
 -- ---
 
 DROP TABLE IF EXISTS `plant`;
-		
+
 CREATE TABLE `plant` (
   `pid` INTEGER NULL AUTO_INCREMENT DEFAULT NULL,
+  `name` VARCHAR(32) NULL DEFAULT NULL,
   PRIMARY KEY (`pid`)
 );
