@@ -1,9 +1,12 @@
+
+#include "spark-dallas-temperature/spark-dallas-temperature.h"
+
 #include "MQTT/MQTT.h"
 
-// light dependenet resistor on analog pin 0
-int ldrPin = A0;
-// moisture sensore on analog pin 1
-int moisturePin = A1;
+
+int ldrPin = A0;        // light dependenet resistor on analog pin 0
+int moisturePin = A1;   // moisture sensore on analog pin 1
+int tempPin = D3;       // Temperature Sensor
 // specify plant name
 // path="/plant/<plant_name>"
 const char* path="/plant/roger";
@@ -18,6 +21,9 @@ const char* path="/plant/roger";
 //MQTT client("server_name", 1883, callback);
 byte server[] = { 192,168,1,116 };
 MQTT client(server, 1883, callback);
+
+/* DS18S20 Temperature chip i/o */
+DallasTemperature sensors(new OneWire(tempPin));
 
 // recieve message
 void callback(char* topic, byte* payload, unsigned int length) {
@@ -60,23 +66,31 @@ void setup() {
     timestamp = millis() + interval;
     pinMode(ldrPin,INPUT);
     pinMode(moisturePin,INPUT);
+    sensors.begin();
 }
 
 void loop() {
     if (millis() > timestamp) { // publish every interval milliseconds
-
+        
         // publish lightlevel
         itoa(analogRead(ldrPin),sensorVal,10); // convert int number as base 10 to char string
         strcpy(topic,path);
         strcat(topic,"/light"); // topic = "/plant/<plant_name>/light
         client.publish(topic, sensorVal);
-
+        
         // publish moisture level
         itoa(analogRead(moisturePin),sensorVal,10); // convert int number as base 10 to char string
         strcpy(topic,path);
         strcat(topic,"/moisture");  // topic = "/plant/<plant_name>/moisture
         client.publish(topic, sensorVal);
-
+        
+        sensors.requestTemperatures();
+        float farenheit = sensors.getTempFByIndex( 0 );
+        snprintf(sensorVal, 5, "%f", farenheit);
+        strcpy(topic,path);
+        strcat(topic,"/temp");  // topic = "/plant/<plant_name>/moisture
+        client.publish(topic, sensorVal);
+        
         // set new interval timer
         timestamp = millis() + interval;
     }
