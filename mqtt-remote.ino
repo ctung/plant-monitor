@@ -67,7 +67,7 @@ void loop() {
         // publish lightlevel
         itoa(analogRead(ldrPin),sensorVal,10); // convert int number as base 10 to char string
         strcpy(topic,path);
-        strcat(topic,"/brightness"); // topic = "/plant/<plant_name>/brightness
+        strcat(topic,"/light"); // topic = "/plant/<plant_name>/light
         client.publish(topic, sensorVal);
         // publish moisture level
         itoa(analogRead(moisturePin),sensorVal,10); // convert int number as base 10 to char string
