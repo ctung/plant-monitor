@@ -1,7 +1,14 @@
 #include "MQTT/MQTT.h"
+#include <string.h>
 
 
-void callback(char* topic, byte* payload, unsigned int length);
+// light dependenet resistor on analog pin 0
+int ldrPin = A0;
+// moisture sensore on analog pin 1
+int moisturePin = A1;
+// specify plant name
+// path="/plant/<plant_name>"
+const char* path="/plant/roger";
 
 /**
  * if want to use IP address,
@@ -13,7 +20,7 @@ void callback(char* topic, byte* payload, unsigned int length);
 //MQTT client("server_name", 1883, callback);
 byte server[] = { 192,168,1,116 };
 MQTT client(server, 1883, callback);
- 
+
 // recieve message
 void callback(char* topic, byte* payload, unsigned int length) {
     char p[length + 1];
@@ -32,9 +39,9 @@ void callback(char* topic, byte* payload, unsigned int length) {
     delay(1000);
 }
 
-int ldrPin = A0;
-int moisturePin = A1;
-char s[5]="";
+char sensorVal[5]="";
+char topic[100]="";
+
 // allow us to use itoa() in this scope
 extern char* itoa(int a, char* buffer, unsigned char radix);
 unsigned long timestamp;
@@ -58,11 +65,18 @@ void setup() {
 }
 
 void loop() {
-    if (millis() > timestamp) { // publish lightLevel every interval milliseconds
-        itoa(analogRead(ldrPin),s,10); // convert int number as base 10 to char string
-        client.publish("/plant/foo/brightness", s);
-        itoa(analogRead(moisturePin),s,10); // convert int number as base 10 to char string
-        client.publish("/plant/foo/moisture", s);
+    if (millis() > timestamp) { // publish every interval milliseconds
+        // publish lightlevel
+        itoa(analogRead(ldrPin),sensorVal,10); // convert int number as base 10 to char string
+        strcpy(topic,path);
+        strcat(topic,"/brightness"); // topic = "/plant/<plant_name>/brightness
+        client.publish(topic, sensorVal);
+        // publish moisture level
+        itoa(analogRead(moisturePin),sensorVal,10); // convert int number as base 10 to char string
+        strcpy(topic,path);
+        strcat(topic,"/moisture");  // topic = "/plant/<plant_name>/moisture
+        client.publish(topic, sensorVal);
+        // set new interval timer
         timestamp = millis() + interval;
     }
     if (client.isConnected())
