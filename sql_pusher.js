@@ -23,10 +23,10 @@ var client = mqtt.connect('mqtt://192.168.1.116');
 client.subscribe('/plant/#');
 
 // mqtt topic format is /plant/<plant_name>/<plant_attribute>
-// valid plant attributes are light and moisture
+// valid plant attributes are light, moisture and temp
 var pattern = /\/plant\/(\w+)\/(\w+)/;
 var match;
-var validAttributes = ['light','moisture'];
+var validAttributes = ['light','moisture','temp'];
 
 client.on('message', function (topic, payload, packet) {
     console.log(topic+'='+payload);
