@@ -64,16 +64,19 @@ void setup() {
 
 void loop() {
     if (millis() > timestamp) { // publish every interval milliseconds
+
         // publish lightlevel
         itoa(analogRead(ldrPin),sensorVal,10); // convert int number as base 10 to char string
         strcpy(topic,path);
         strcat(topic,"/light"); // topic = "/plant/<plant_name>/light
         client.publish(topic, sensorVal);
+
         // publish moisture level
         itoa(analogRead(moisturePin),sensorVal,10); // convert int number as base 10 to char string
         strcpy(topic,path);
         strcat(topic,"/moisture");  // topic = "/plant/<plant_name>/moisture
         client.publish(topic, sensorVal);
+
         // set new interval timer
         timestamp = millis() + interval;
     }
