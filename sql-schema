@@ -6,7 +6,8 @@ CREATE TABLE `data` (
   `timestamp` TIMESTAMP NULL DEFAULT NULL,
   `brightness` INTEGER NULL DEFAULT NULL,
   `moisture` INTEGER NULL DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  UNIQUE KEY (`pid`,`timestamp`)
 );
 
 -- ---
