@@ -33,6 +33,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
 }
 
 int ldrPin = A0;
+int moisturePin = A1;
 char s[5]="";
 // allow us to use itoa() in this scope
 extern char* itoa(int a, char* buffer, unsigned char radix);
@@ -53,12 +54,15 @@ void setup() {
     
     timestamp = millis() + interval;
     pinMode(ldrPin,INPUT);
+    pinMode(moisturePin,INPUT);
 }
 
 void loop() {
     if (millis() > timestamp) { // publish lightLevel every interval milliseconds
         itoa(analogRead(ldrPin),s,10); // convert int number as base 10 to char string
-        client.publish("/plant/brightness", s);
+        client.publish("/plant/foo/brightness", s);
+        itoa(analogRead(moisturePin),s,10); // convert int number as base 10 to char string
+        client.publish("/plant/foo/moisture", s);
         timestamp = millis() + interval;
     }
     if (client.isConnected())
