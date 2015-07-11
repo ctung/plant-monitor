@@ -1,6 +1,4 @@
 #include "MQTT/MQTT.h"
-#include <string.h>
-
 
 // light dependenet resistor on analog pin 0
 int ldrPin = A0;
