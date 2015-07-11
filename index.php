@@ -16,7 +16,7 @@ $plant = "roger";
       data.addColumn('datetime', 'Datetime');
       data.addColumn('number', 'Light');
       data.addColumn('number', 'Moisture');
-      
+      data.addColumn('number', 'Temperature');
       data.addRows([
 	<?php 
 	require_once 'connectvars.php';
@@ -24,11 +24,20 @@ $plant = "roger";
 	if ($conn->connect_error) {
 	  die("Connection failed: ". $conn->connect_error);
 	}
+
+	// variables to store last known value if current value is NULL (returned as 0)
+	$lastLight = 0;
+	$lastMoisture = 0;
+	$lastTemp = 0;
+
 	$sql = "SELECT timestamp,light,moisture FROM data WHERE pid=(SELECT pid FROM plant WHERE name='".$plant."')";
 	$result = $conn->query($sql);
 	$rows = array();
 	while($row = $result->fetch_assoc()) {
-	  array_push($rows, "[new Date('".$row['timestamp']."'), ".$row['light']/40.96 .", ".$row['moisture']/40.96 ."]");
+	  if ($row['light'] > 0) { $lastLight=sprintf("%0.1f",$row['light']/40.96); }
+	  if ($row['moisture'] > 0) { $lastMoisture = sprintf("%0.1f",$row['moisture']/40.96); }
+	  if ($row['temp'] > 0) { $lastTemp = $row['temp']; }
+	  array_push($rows, "[new Date('".$row['timestamp']."'), ".$lastLight.", ".$lastMoisture.", ".$lastTemp."]");
 	}
 	echo implode(",",$rows);
 	mysqli_close($conn);
