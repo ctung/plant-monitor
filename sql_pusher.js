@@ -12,7 +12,7 @@ var connection = mysql.createConnection({
     host     : 'localhost',
     user     : '<user>',
     password : '<password>',
-    database : 'plant'
+    database : 'iop'
 });
 
 connection.connect();
