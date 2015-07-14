@@ -17,6 +17,7 @@ $plant = "roger";
       data.addColumn('number', 'Light');
       data.addColumn('number', 'Moisture');
       data.addColumn('number', 'Temperature');
+      data.addColumn('number', 'Pump');
       data.addRows([
 	<?php 
 	require_once 'connectvars.php';
@@ -29,6 +30,7 @@ $plant = "roger";
 	$lastLight = 0;
 	$lastMoisture = 0;
 	$lastTemp = 0;
+	$lastPump = 0;
 
 	$sql = "SELECT timestamp,light,moisture FROM data WHERE pid=(SELECT pid FROM plant WHERE name='".$plant."')";
 	$result = $conn->query($sql);
@@ -36,8 +38,8 @@ $plant = "roger";
 	while($row = $result->fetch_assoc()) {
 	  if ($row['light'] > 0) { $lastLight=sprintf("%0.1f",$row['light']/40.96); }
 	  if ($row['moisture'] > 0) { $lastMoisture = sprintf("%0.1f",$row['moisture']/40.96); }
-	  if ($row['temp'] > 0) { $lastTemp = $row['temp']; }
-	  array_push($rows, "[new Date('".$row['timestamp']."'), ".$lastLight.", ".$lastMoisture.", ".$lastTemp."]");
+	  $date = implode(",",preg_split("/[- :]/",$row['timestamp'])).",0";  // split string into year, month, day, ...
+	  array_push($rows, "[new Date(".$date."), ".$lastLight.", ".$lastMoisture.", ".$lastTemp.", ".$lastPump."]");
 	}
 	echo implode(",",$rows);
 	mysqli_close($conn);
