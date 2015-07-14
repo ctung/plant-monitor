@@ -1,5 +1,5 @@
 <?php 
-$plant = "roger";
+$plant = "moneyTree";
 ?>
 <!DOCTYPE html>
 <html>
