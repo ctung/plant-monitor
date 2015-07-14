@@ -49,10 +49,15 @@ void callback(char* topic, byte* payload, unsigned int length) {
         RGB.control(true);
         RGB.color(0, 0, 255);
         
+        getTopic(topic,plantName,"pump");
+        client.publish(topic,"100");
+        
         // run the pump for the specified number of seconds
         digitalWrite(waterPin,HIGH);
         delay(water*1000);
         digitalWrite(waterPin,LOW);
+        
+        client.publish(topic,"0");
         
         // release control of LED
         RGB.control(false);
@@ -76,7 +81,7 @@ void setup() {
     if (client.isConnected()) {
         getTopic(topic,plantName,"status");
         client.publish(topic,"connected");
-        getTopic(topic,plantName,"water");
+        getTopic(topic,plantName,"addWater");
         client.subscribe(topic);
     }
     
