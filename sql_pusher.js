@@ -45,7 +45,9 @@ client.on('message', function (topic, payload, packet) {
 		});
 
 		// insert the plant's attribute data into the SQL data table
-		var query = 'INSERT INTO data (timestamp,pid,'+match[2]+') VALUES (now(), (SELECT pid FROM plant WHERE name="'+match[1]+'"),'+payload+') ON DUPLICATE KEY UPDATE '+match[2]+'=VALUES('+match[2]+')';
+		var query = 'INSERT INTO data (timestamp,pid,'+match[2]+') ';
+		query =query+'VALUES (now(), (SELECT pid FROM plant WHERE name="'+match[1]+'"),'+payload+') ';
+		query =query+'ON DUPLICATE KEY UPDATE '+match[2]+'=VALUES('+match[2]+')';
 		console.log(query);
 		connection.query(query, function(err,results) { 
 		    if (err) throw err;
