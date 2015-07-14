@@ -7,6 +7,7 @@ CREATE TABLE `data` (
   `light` INTEGER NULL DEFAULT NULL,
   `moisture` INTEGER NULL DEFAULT NULL,
   `temp` FLOAT NULL DEFAULT NULL,
+  `water` TINYINT NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY (`pid`,`timestamp`)
 );
