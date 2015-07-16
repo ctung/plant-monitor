@@ -122,8 +122,19 @@ void loop() {
         // set new interval timer
         timeElapsed = 0;
     }
-    if (client.isConnected())
-        client.loop();
+     if (!client.loop()) { // reconnect if not connected to MQTT
+        strcpy(topic,"plant_");
+        strcat(topic,plantName);
+        client.connect(topic);
+    
+        // publish/subscribe
+        if (client.isConnected()) {
+            getTopic(topic,plantName,"status");
+            client.publish(topic,"re-connected");
+            getTopic(topic,plantName,"addWater");
+            client.subscribe(topic);
+        }
+    }
 }
 
 // create a topic string in the form of /plant/<plantName>/<attribute>
