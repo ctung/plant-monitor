@@ -90,13 +90,20 @@ void setup() {
     pinMode(waterPin,OUTPUT);
     digitalWrite(waterPin,LOW);
     sensors.begin();
+    RGB.control(true);
+    
 }
 
 void loop() {
+    if(client.isConnected()) {
+        // set the LED green  
+        RGB.color(0,255,0); 
+    } else {
+        // set the LED red
+        RGB.color(255,0,0); 
+    }
     if (timeElapsed > sensorInterval) { // publish every interval milliseconds
-        // flash the LED green
-        RGB.control(true);
-        RGB.color(0,255,0);
+        
         
         // publish lightlevel
         itoa(analogRead(ldrPin),sensorVal,10); // convert int number as base 10 to char string
@@ -115,14 +122,10 @@ void loop() {
         getTopic(topic,plantName,"temp");
         client.publish(topic, sensorVal);
         
-        // release control of LED
-        delay(1000);
-        RGB.control(false);
-        
         // set new interval timer
         timeElapsed = 0;
     }
-     if (!client.loop()) { // reconnect if not connected to MQTT
+    if (!client.loop()) {
         strcpy(topic,"plant_");
         strcat(topic,plantName);
         client.connect(topic);
